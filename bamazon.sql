@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS bamazon_DB;
-CREATE DATABASE bamazon_DB;
+DROP DATABASE IF EXISTS bamazon_db;
+CREATE DATABASE bamazon_db;
 
 USE bamazon_DB;
 
@@ -8,6 +8,8 @@ CREATE TABLE auctions(
     product_name VARCHAR(100) NOT NULL,
     department_name VARCHAR(80) NOT NULL,
     price DECIMAL(13,4),
-    stock_quantity, INT(10),
+    stock_quantity INTEGER(10),
     PRIMARY KEY (item_id)
-)
+);
+
+SELECT * FROM auctions;
