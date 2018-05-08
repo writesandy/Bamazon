@@ -6,7 +6,7 @@ let connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: "",
+    password: "Acumed09",
     database: "bamazon_DB"
 });
 
@@ -46,19 +46,20 @@ function start() {
                 }
             }
          ]).then(function(ans){
-             let whatBuying = ans.id;
+             let whatBuying = (ans.id)-1;
              let howMany = parseInt(ans.quantity);
              let grandTotal = parseFloat(((res[whatBuying].Price)*howMany).toFixed(2));
 
-             if(res[whatBuying].StockQuantity >= howMany) {
+             if(res[whatBuying].Stock_Quantity >= howMany) {
                  connection.query("UPDATE Products SET ? WHERE ?", [
-                     {StockQuantity: (res[whatBuying].StockQuantity - howMany)},
+                     {Stock_Quantity: (res[whatBuying].Stock_Quantity - howMany)},
                      {Item_ID: ans.id}
                     
                 ], function(err,result) {
                      if(err) throw err;
                      console.log("Purchase Complete! Your total is $" +grandTotal.toFixed(2) + ". Your item(s) will be shipped to you for delivery tomorrow.")
-                 });
+
+                    });
 
 
                  connection.query("SELECT * FROM Departments", function (err, deptRes) {
@@ -83,8 +84,8 @@ function start() {
             console.log("sorry, there's not enough in stock!");
         }
 
-            askAgain();
 
+        askAgain();
     });
 
 });
