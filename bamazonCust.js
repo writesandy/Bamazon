@@ -1,3 +1,5 @@
+'use strict';
+
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 
@@ -6,7 +8,7 @@ let connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: "Acumed09",
+    password: "",
     database: "bamazon_DB"
 });
 
@@ -50,7 +52,10 @@ function start() {
              let howMany = parseInt(ans.quantity);
              let grandTotal = parseFloat(((res[whatBuying].Price)*howMany).toFixed(2));
 
-             if(res[whatBuying].Stock_Quantity >= howMany) {
+             if(res[whatBuying].Stock_Quantity < howMany) {
+                console.log("sorry, there's not enough in stock!");
+                askAgain();
+             } else {
                  connection.query("UPDATE Products SET ? WHERE ?", [
                      {Stock_Quantity: (res[whatBuying].Stock_Quantity - howMany)},
                      {Item_ID: ans.id}
@@ -58,34 +63,9 @@ function start() {
                 ], function(err,result) {
                      if(err) throw err;
                      console.log("Purchase Complete! Your total is $" +grandTotal.toFixed(2) + ". Your item(s) will be shipped to you for delivery tomorrow.")
-
+                    askAgain();
                     });
-
-
-                 connection.query("SELECT * FROM Departments", function (err, deptRes) {
-                     if (err) throw err;
-                     let index;
-                     for(let i = 0; i < deptRes.length; i++){
-                         if(deptRes[i].Department_Name === res[whatBuying].DepartmentName) {
-                             index = i;
-                         }
-                     }
-
-
-                 connection.query("UPDATE Departments SET ? WHERE ?", [
-                     {TotalSales: deptRes[index].TotalSales + grandTotal},
-                    {Department_Name: res[whatBuying].Department_Name}
-                 ], function (err, deptRes) {
-                     if (err) throw err;
-                 });
-            });
-
-                } else {
-            console.log("sorry, there's not enough in stock!");
-        }
-
-
-        askAgain();
+                }
     });
 
 });
